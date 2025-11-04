@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import requests
+import cloudscraper
 import json
 import yaml
 
@@ -8,14 +8,16 @@ URL = "https://nhentai.net/tags/"
 
 
 def wtfcloudflare(url, method="get", useragent=None, cookie=None, data=None):
-    session = requests.Session()
-    session.headers = {
-        'Referer': "https://nhentai.net/login/",
-        'User-Agent': useragent,
-        'Cookie': cookie,
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-    }
+    session = cloudscraper.create_scraper()
+    session.headers.update(
+        {
+            "Referer": "https://nhentai.net/",
+            "User-Agent": useragent,
+            "Cookie": cookie,
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate",
+        }
+    )
     if method == "get":
         r = session.get(url)
     elif method == "post":
@@ -24,7 +26,7 @@ def wtfcloudflare(url, method="get", useragent=None, cookie=None, data=None):
 
 
 def get_tags():
-    with open('set.yaml', 'r') as f:
+    with open("set.yaml", "r") as f:
         data = yaml.load(f, Loader=yaml.CLoader)
         cookie = data["cookid"]
         useragent = data["useragent"]
@@ -35,17 +37,16 @@ def get_tags():
     tagjson = {}
 
     while True:
-        data = wtfcloudflare(f"{URL}?page={now}",
-                             useragent=useragent, cookie=cookie)
-        soup = BeautifulSoup(data.text, 'html.parser')
-        tags = soup.find_all("a", class_='tag')
+        data = wtfcloudflare(f"{URL}?page={now}", useragent=useragent, cookie=cookie)
+        soup = BeautifulSoup(data.text, "html.parser")
+        tags = soup.find_all("a", class_="tag")
         if tags == []:
             break
-        tagnumbers = [t.get('class') for t in tags]
-        tagnames = [t.find('span', class_='name').get_text() for t in tags]
+        tagnumbers = [t.get("class") for t in tags]
+        tagnames = [t.find("span", class_="name").get_text() for t in tags]
         tagnumber = []
         for i in tagnumbers:
-            fixnum = i[1].replace('tag-', '')
+            fixnum = i[1].replace("tag-", "")
             tagnumber.append(fixnum)
         for i in enumerate(tagnumber):
             tagjson[i[1]] = tagnames[i[0]]
@@ -54,11 +55,11 @@ def get_tags():
     if tagjson == {}:
         print("something wrong with your cookie or useragent")
         exit()
-    with open('tag.json', 'w') as f:
+    with open("tag.json", "w") as f:
         json.dump(tagjson, f)
     print("tag.json saved")
     return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     get_tags()
