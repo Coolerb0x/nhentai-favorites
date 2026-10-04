@@ -1,25 +1,24 @@
 # nhentai-favorites
 
+Export your nhentai favorites to a csv file using the official [nhentai API](https://nhentai.net/api/v2/docs).
+
 ## how to use?
 
-`pip install -r ".\requirements.txt"`  
-open `nfavorites.py` and it will close and generate set.yaml  
-open `set.yaml` and enter your cookie and useragent  
-final open nfavorites.py again and it will generate csv file if everything is ok
+`pip install -r ".\requirements.txt"`
+run `nfavorites.py` once, it will exit and generate `set.yaml`
+generate an API key in your [account settings](https://nhentai.net/user/settings#apikeys)
+when asked "We're curious — what are you building?", you can paste:
 
-## how to get my cookie?
+```text
+Using https://github.com/phillychi3/nhentai-favorites to export my favorites.
+```
 
-open <https://nhentai.net/favorites/>  
-open developer tools (F12)  
-switch to network tab  
-find favorites/ and click it  
-find cookie and useragent in request headers  
+open `set.yaml` and enter your API key:
 
-## if something goes wrong in gettags
+```yaml
+apikey: YOUR_API_KEY
+```
 
-rename `example_tag.json` to `tag.json`  
-rerun `nfavorites.py`  
-
-![alt text](https://github.com/phillychi3/nhentai-favorites/blob/main/image/nhentai_cookie_anduseranegt.png?raw=true)
+run `nfavorites.py` again and it will generate `output.csv`
 
 ![alt text](https://github.com/phillychi3/nhentai-favorites/blob/main/image/csv.png?raw=true)
